@@ -3,8 +3,6 @@
 
 package errors
 
-import baseErrors "errors"
-
 // Join returns an error that wraps the given errors.
 // Any nil error values are discarded.
 // Join returns nil if every value in errs is nil.
@@ -15,9 +13,7 @@ import baseErrors "errors"
 // A non-nil error returned by Join implements the Unwrap() []error method.
 //
 // For more information see stdlib errors.Join.
-func Join(errs ...error) error {
-	return baseErrors.Join(errs...)
-}
+func Join(errs ...error) error { _ = "STUB: not implemented"; return nil }
 
 // Unwrap returns the result of calling the Unwrap method on err, if err's
 // type contains an Unwrap method returning error.
@@ -27,6 +23,4 @@ func Join(errs ...error) error {
 // In particular Unwrap does not unwrap errors returned by [Join].
 //
 // For more information see stdlib errors.Unwrap.
-func Unwrap(err error) error {
-	return baseErrors.Unwrap(err)
-}
+func Unwrap(err error) error { _ = "STUB: not implemented"; return nil }

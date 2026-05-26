@@ -9,48 +9,41 @@
 //
 // For example:
 //
-//  package crashy
+//	package crashy
 //
-//  import "github.com/go-errors/errors"
+//	import "github.com/go-errors/errors"
 //
-//  var Crashed = errors.Errorf("oh dear")
+//	var Crashed = errors.Errorf("oh dear")
 //
-//  func Crash() error {
-//      return errors.New(Crashed)
-//  }
+//	func Crash() error {
+//	    return errors.New(Crashed)
+//	}
 //
 // This can be called as follows:
 //
-//  package main
+//	package main
 //
-//  import (
-//      "crashy"
-//      "fmt"
-//      "github.com/go-errors/errors"
-//  )
+//	import (
+//	    "crashy"
+//	    "fmt"
+//	    "github.com/go-errors/errors"
+//	)
 //
-//  func main() {
-//      err := crashy.Crash()
-//      if err != nil {
-//          if errors.Is(err, crashy.Crashed) {
-//              fmt.Println(err.(*errors.Error).ErrorStack())
-//          } else {
-//              panic(err)
-//          }
-//      }
-//  }
+//	func main() {
+//	    err := crashy.Crash()
+//	    if err != nil {
+//	        if errors.Is(err, crashy.Crashed) {
+//	            fmt.Println(err.(*errors.Error).ErrorStack())
+//	        } else {
+//	            panic(err)
+//	        }
+//	    }
+//	}
 //
 // This package was original written to allow reporting to Bugsnag,
 // but after I found similar packages by Facebook and Dropbox, it
 // was moved to one canonical location so everyone can benefit.
 package errors
-
-import (
-	"bytes"
-	"fmt"
-	"reflect"
-	"runtime"
-)
 
 // The maximum number of stackframes on any error.
 var MaxStackDepth = 50
@@ -68,23 +61,7 @@ type Error struct {
 // error then it will be used directly, if not, it will be passed to
 // fmt.Errorf("%v"). The stacktrace will point to the line of code that
 // called New.
-func New(e interface{}) *Error {
-	var err error
-
-	switch e := e.(type) {
-	case error:
-		err = e
-	default:
-		err = fmt.Errorf("%v", e)
-	}
-
-	stack := make([]uintptr, MaxStackDepth)
-	length := runtime.Callers(2, stack[:])
-	return &Error{
-		Err:   err,
-		stack: stack[:length],
-	}
-}
+func New(e interface{}) *Error { _ = "STUB: not implemented"; return nil }
 
 // Wrap makes an Error from the given value. If that value is already an *Error
 // it will not be wrapped and instead will be returned without modification. If
@@ -93,29 +70,7 @@ func New(e interface{}) *Error {
 // explicitly wrap an *Error with a new stacktrace use Errorf. The skip
 // parameter indicates how far up the stack to start the stacktrace. 0 is from
 // the current call, 1 from its caller, etc.
-func Wrap(e interface{}, skip int) *Error {
-	if e == nil {
-		return nil
-	}
-
-	var err error
-
-	switch e := e.(type) {
-	case *Error:
-		return e
-	case error:
-		err = e
-	default:
-		err = fmt.Errorf("%v", e)
-	}
-
-	stack := make([]uintptr, MaxStackDepth)
-	length := runtime.Callers(2+skip, stack[:])
-	return &Error{
-		Err:   err,
-		stack: stack[:length],
-	}
-}
+func Wrap(e interface{}, skip int) *Error { _ = "STUB: not implemented"; return nil }
 
 // WrapPrefix makes an Error from the given value. If that value is already an
 // *Error it will not be wrapped and instead will be returned without
@@ -127,89 +82,40 @@ func Wrap(e interface{}, skip int) *Error {
 // the stack to start the stacktrace. 0 is from the current call, 1 from its
 // caller, etc.
 func WrapPrefix(e interface{}, prefix string, skip int) *Error {
-	if e == nil {
-		return nil
-	}
-
-	err := Wrap(e, 1+skip)
-
-	if err.prefix != "" {
-		prefix = fmt.Sprintf("%s: %s", prefix, err.prefix)
-	}
-
-	return &Error{
-		Err:    err.Err,
-		stack:  err.stack,
-		prefix: prefix,
-	}
-
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Errorf creates a new error with the given message. You can use it
 // as a drop-in replacement for fmt.Errorf() to provide descriptive
 // errors in return values.
-func Errorf(format string, a ...interface{}) *Error {
-	return Wrap(fmt.Errorf(format, a...), 1)
-}
+func Errorf(format string, a ...interface{}) *Error { _ = "STUB: not implemented"; return nil }
 
 // Error returns the underlying error's message.
-func (err *Error) Error() string {
-
-	msg := err.Err.Error()
-	if err.prefix != "" {
-		msg = fmt.Sprintf("%s: %s", err.prefix, msg)
-	}
-
-	return msg
-}
+func (err *Error) Error() string { _ = "STUB: not implemented"; return "" }
 
 // Stack returns the callstack formatted the same way that go does
 // in runtime/debug.Stack()
-func (err *Error) Stack() []byte {
-	buf := bytes.Buffer{}
-
-	for _, frame := range err.StackFrames() {
-		buf.WriteString(frame.String())
-	}
-
-	return buf.Bytes()
-}
+func (err *Error) Stack() []byte { _ = "STUB: not implemented"; return nil }
 
 // Callers satisfies the bugsnag ErrorWithCallerS() interface
 // so that the stack can be read out.
 func (err *Error) Callers() []uintptr {
-	return err.stack
+	_ = "STUB: not implemented"
+
+	// ErrorStack returns a string that contains both the
+	// error message and the callstack.
+	return nil
 }
 
-// ErrorStack returns a string that contains both the
-// error message and the callstack.
-func (err *Error) ErrorStack() string {
-	return err.TypeName() + " " + err.Error() + "\n" + string(err.Stack())
-}
+func (err *Error) ErrorStack() string { _ = "STUB: not implemented"; return "" }
 
 // StackFrames returns an array of frames containing information about the
 // stack.
-func (err *Error) StackFrames() []StackFrame {
-	if err.frames == nil {
-		err.frames = make([]StackFrame, len(err.stack))
-
-		for i, pc := range err.stack {
-			err.frames[i] = NewStackFrame(pc)
-		}
-	}
-
-	return err.frames
-}
+func (err *Error) StackFrames() []StackFrame { _ = "STUB: not implemented"; return nil }
 
 // TypeName returns the type this error. e.g. *errors.stringError.
-func (err *Error) TypeName() string {
-	if _, ok := err.Err.(uncaughtPanic); ok {
-		return "panic"
-	}
-	return reflect.TypeOf(err.Err).String()
-}
+func (err *Error) TypeName() string { _ = "STUB: not implemented"; return "" }
 
 // Return the wrapped error (implements api for As function).
-func (err *Error) Unwrap() error {
-	return err.Err
-}
+func (err *Error) Unwrap() error { _ = "STUB: not implemented"; return nil }
